@@ -1,0 +1,677 @@
+---
+title: "es_207_hw8"
+author: "Gustavo Facincani Dourado"
+date: "3/22/2020"
+output: html_document
+---
+
+R for Data Science
+
+14.2.5 Exercises
+
+Exercise 3. Use str_length() and str_sub() to extract the middle character from a string. What will you do if the string has an even number of characters?
+```{r}
+library(tidyverse)
+library(data.table)
+?str_sub
+
+x <- c("a", "abc", "abcde", "abcdefg")
+y <- c("ab", "abcd", "abcdef", "abcdefgh")
+L <- str_length(x)
+m <- ceiling(L / 2)
+
+#Formula for odd strings
+str_sub(x, m, m)
+
+#Formula for even string
+str_sub(y, m, m+1)
+```
+The equations above can give us the middle character of a string by using the logic n/2, that works well for odd strings. For even string we can use the (n/2)+1 logic.
+
+Exercise 4. What does str_wrap() do? When might you want to use it?
+```{r}
+?str_wrap
+
+thanks_path <- file.path(R.home("doc"), "THANKS")
+thanks <- str_c(readLines(thanks_path), collapse = "\n")
+thanks <- word(thanks, 1, 3, fixed("\n\n"))
+cat(str_wrap(thanks), "\n")
+cat(str_wrap(thanks, width = 40), "\n")
+cat(str_wrap(thanks, width = 60, indent = 2), "\n")
+cat(str_wrap(thanks, width = 60, exdent = 2), "\n")
+cat(str_wrap(thanks, width = 0, exdent = 2), "\n")
+```
+
+The function str_wrap wraps strings into nicely formatted paragraphs, within a certain width, allowing to edit the space from the edge for the first line of writing (indent) and for the rest of the text (exdent). It can be used to modify existing whitespace in order to wrap a paragraph of text, such that the length of each line is as similar as possible, such as the following example:
+
+```{r}
+jabberwocky <- str_c(
+  "`Twas brillig, and the slithy toves ",
+  "did gyre and gimble in the wabe: ",
+  "All mimsy were the borogoves, ",
+  "and the mome raths outgrabe. "
+)
+cat(str_wrap(jabberwocky, width = 40))
+
+```
+
+
+Exercise 5. What does str_trim() do? What’s the opposite of str_trim()?
+```{r}
+?str_trim
+
+#Example
+
+str_trim("  String with trailing and leading white space\t")
+str_trim("\n\nString with trailing and leading white space\n\n")
+
+```
+
+The function str_trim removes whitespace from start and end of string. The opposite of str_trim() is str_pad() to add whitespace.
+
+Exercise 6. Write a function that turns (e.g.) a vector c("a", "b", "c") into the string a, b, and c. Think carefully about what it should do if given a vector of length 0, 1, or 2.
+```{r}
+
+?seq_len
+
+#Function to turn a vector into a string
+
+str_commasep <- function(x, delim = ",") {
+  n <- length(x)
+  #when length = 0
+  if (n == 0) {
+    ""
+    #when length = 1
+  } else if (n == 1) {
+    x
+    #when lenght = 2
+  } else if (n == 2) {
+    #Use str_c() to combine strings
+    str_c(x[[1]], "and", x[[2]], sep = " ")
+  } else {
+    # commas after all elements but the last, using seq_len, which creates a sequence that starts at 1 and with steps of 1 finishes at the number value
+    not_last <- str_c(x[seq_len(n - 1)], delim)
+    #Now we set the last element
+    last <- str_c("and", x[[n]], sep = " ")
+    #Combine parts with spaces
+    str_c(c(not_last, last), collapse = " ")
+  }
+}
+#Vector of lenght 0
+str_commasep("")
+#Vector of lenght 1
+str_commasep("a")
+#Vector of lenght 2
+str_commasep(c("a", "b"))
+#Vector of lenght 3
+str_commasep(c("a", "b", "c"))
+#Vector of lenght 4
+str_commasep(c("a", "b", "c", "d"))
+```
+Show in New WindowClear OutputExpand/Collapse Output
+R would not be what it is today without the invaluable help of these people
+outside of the R core team, who contributed by donating code, bug fixes and
+documentation: Valerio Aimale, Suharto Anggono, Thomas Baier, Henrik Bengtsson,
+Roger Bivand, Ben Bolker, David Brahm, G"oran Brostr"om, Patrick Burns, Vince
+Carey, Saikat DebRoy, Matt Dowle, Brian D'Urso, Lyndon Drake, Dirk Eddelbuettel,
+Claus Ekstrom, Sebastian Fischmeister, John Fox, Paul Gilbert, Yu Gong, Gabor
+Grothendieck, Frank E Harrell Jr, Peter M. Haverty, Torsten Hothorn, Robert
+King, Kjetil Kjernsmo, Roger Koenker, Philippe Lambert, Jan de Leeuw, Jim
+Lindsey, Patrick Lindsey, Catherine Loader, Gordon Maclean, Arni Magnusson, John
+Maindonald, David Meyer, Ei-ji Nakama, Jens Oehlschaegel, Steve Oncley, Richard
+O'Keefe, Hubert Palme, Roger D. Peng, Jose' C. Pinheiro, Tony Plate, Anthony
+Rossini, Jonathan Rougier, Petr Savicky, Guenther Sawitzki, Marc Schwartz, Arun
+Srinivasan, Detlef Steuer, Bill Simpson, Gordon Smyth, Adrian Trapletti, Terry
+Therneau, Rolf Turner, Bill Venables, Gregory R. Warnes, Andreas Weingessel,
+Morten Welinder, James Wettenhall, Simon Wood, and Achim Zeileis. Others have
+written code that has been adopted by R and is acknowledged in the code files,
+including 
+R would not be what it is today
+without the invaluable help of these
+people outside of the R core team, who
+contributed by donating code, bug fixes
+and documentation: Valerio Aimale,
+Suharto Anggono, Thomas Baier, Henrik
+Bengtsson, Roger Bivand, Ben Bolker,
+David Brahm, G"oran Brostr"om, Patrick
+Burns, Vince Carey, Saikat DebRoy,
+Matt Dowle, Brian D'Urso, Lyndon Drake,
+Dirk Eddelbuettel, Claus Ekstrom,
+Sebastian Fischmeister, John Fox, Paul
+Gilbert, Yu Gong, Gabor Grothendieck,
+Frank E Harrell Jr, Peter M. Haverty,
+Torsten Hothorn, Robert King, Kjetil
+Kjernsmo, Roger Koenker, Philippe
+Lambert, Jan de Leeuw, Jim Lindsey,
+Patrick Lindsey, Catherine Loader,
+Gordon Maclean, Arni Magnusson, John
+Maindonald, David Meyer, Ei-ji Nakama,
+Jens Oehlschaegel, Steve Oncley, Richard
+O'Keefe, Hubert Palme, Roger D. Peng,
+Jose' C. Pinheiro, Tony Plate, Anthony
+Rossini, Jonathan Rougier, Petr Savicky,
+Guenther Sawitzki, Marc Schwartz, Arun
+Srinivasan, Detlef Steuer, Bill Simpson,
+Gordon Smyth, Adrian Trapletti, Terry
+Therneau, Rolf Turner, Bill Venables,
+Gregory R. Warnes, Andreas Weingessel,
+Morten Welinder, James Wettenhall, Simon
+Wood, and Achim Zeileis. Others have
+written code that has been adopted by R
+and is acknowledged in the code files,
+including 
+  R would not be what it is today without the invaluable help
+of these people outside of the R core team, who contributed
+by donating code, bug fixes and documentation: Valerio
+Aimale, Suharto Anggono, Thomas Baier, Henrik Bengtsson,
+Roger Bivand, Ben Bolker, David Brahm, G"oran Brostr"om,
+Patrick Burns, Vince Carey, Saikat DebRoy, Matt Dowle,
+Brian D'Urso, Lyndon Drake, Dirk Eddelbuettel, Claus
+Ekstrom, Sebastian Fischmeister, John Fox, Paul Gilbert,
+Yu Gong, Gabor Grothendieck, Frank E Harrell Jr, Peter M.
+Haverty, Torsten Hothorn, Robert King, Kjetil Kjernsmo,
+Roger Koenker, Philippe Lambert, Jan de Leeuw, Jim Lindsey,
+Patrick Lindsey, Catherine Loader, Gordon Maclean, Arni
+Magnusson, John Maindonald, David Meyer, Ei-ji Nakama,
+Jens Oehlschaegel, Steve Oncley, Richard O'Keefe, Hubert
+Palme, Roger D. Peng, Jose' C. Pinheiro, Tony Plate, Anthony
+Rossini, Jonathan Rougier, Petr Savicky, Guenther Sawitzki,
+Marc Schwartz, Arun Srinivasan, Detlef Steuer, Bill Simpson,
+Gordon Smyth, Adrian Trapletti, Terry Therneau, Rolf Turner,
+Bill Venables, Gregory R. Warnes, Andreas Weingessel, Morten
+Welinder, James Wettenhall, Simon Wood, and Achim Zeileis.
+Others have written code that has been adopted by R and is
+acknowledged in the code files, including 
+R would not be what it is today without the invaluable help
+  of these people outside of the R core team, who contributed
+  by donating code, bug fixes and documentation: Valerio
+  Aimale, Suharto Anggono, Thomas Baier, Henrik Bengtsson,
+  Roger Bivand, Ben Bolker, David Brahm, G"oran Brostr"om,
+  Patrick Burns, Vince Carey, Saikat DebRoy, Matt Dowle,
+  Brian D'Urso, Lyndon Drake, Dirk Eddelbuettel, Claus
+  Ekstrom, Sebastian Fischmeister, John Fox, Paul Gilbert,
+  Yu Gong, Gabor Grothendieck, Frank E Harrell Jr, Peter M.
+  Haverty, Torsten Hothorn, Robert King, Kjetil Kjernsmo,
+  Roger Koenker, Philippe Lambert, Jan de Leeuw, Jim Lindsey,
+  Patrick Lindsey, Catherine Loader, Gordon Maclean, Arni
+  Magnusson, John Maindonald, David Meyer, Ei-ji Nakama,
+  Jens Oehlschaegel, Steve Oncley, Richard O'Keefe, Hubert
+  Palme, Roger D. Peng, Jose' C. Pinheiro, Tony Plate, Anthony
+  Rossini, Jonathan Rougier, Petr Savicky, Guenther Sawitzki,
+  Marc Schwartz, Arun Srinivasan, Detlef Steuer, Bill Simpson,
+  Gordon Smyth, Adrian Trapletti, Terry Therneau, Rolf Turner,
+  Bill Venables, Gregory R. Warnes, Andreas Weingessel, Morten
+  Welinder, James Wettenhall, Simon Wood, and Achim Zeileis.
+  Others have written code that has been adopted by R and is
+  acknowledged in the code files, including 
+R
+  would
+  not
+  be
+  what
+  it
+  is
+  today
+  without
+  the
+  invaluable
+  help
+  of
+  these
+  people
+  outside
+  of
+  the
+  R
+  core
+  team,
+  who
+  contributed
+  by
+  donating
+  code,
+  bug
+  fixes
+  and
+  documentation:
+  Valerio
+  Aimale,
+  Suharto
+  Anggono,
+  Thomas
+  Baier,
+  Henrik
+  Bengtsson,
+  Roger
+  Bivand,
+  Ben
+  Bolker,
+  David
+  Brahm,
+  G"oran
+  Brostr"om,
+  Patrick
+  Burns,
+  Vince
+  Carey,
+  Saikat
+  DebRoy,
+  Matt
+  Dowle,
+  Brian
+  D'Urso,
+  Lyndon
+  Drake,
+  Dirk
+  Eddelbuettel,
+  Claus
+  Ekstrom,
+  Sebastian
+  Fischmeister,
+  John
+  Fox,
+  Paul
+  Gilbert,
+  Yu
+  Gong,
+  Gabor
+  Grothendieck,
+  Frank
+  E
+  Harrell
+  Jr,
+  Peter
+  M.
+  Haverty,
+  Torsten
+  Hothorn,
+  Robert
+  King,
+  Kjetil
+  Kjernsmo,
+  Roger
+  Koenker,
+  Philippe
+  Lambert,
+  Jan
+  de
+  Leeuw,
+  Jim
+  Lindsey,
+  Patrick
+  Lindsey,
+  Catherine
+  Loader,
+  Gordon
+  Maclean,
+  Arni
+  Magnusson,
+  John
+  Maindonald,
+  David
+  Meyer,
+  Ei-
+  ji
+  Nakama,
+  Jens
+  Oehlschaegel,
+  Steve
+  Oncley,
+  Richard
+  O'Keefe,
+  Hubert
+  Palme,
+  Roger
+  D.
+  Peng,
+  Jose'
+  C.
+  Pinheiro,
+  Tony
+  Plate,
+  Anthony
+  Rossini,
+  Jonathan
+  Rougier,
+  Petr
+  Savicky,
+  Guenther
+  Sawitzki,
+  Marc
+  Schwartz,
+  Arun
+  Srinivasan,
+  Detlef
+  Steuer,
+  Bill
+  Simpson,
+  Gordon
+  Smyth,
+  Adrian
+  Trapletti,
+  Terry
+  Therneau,
+  Rolf
+  Turner,
+  Bill
+  Venables,
+  Gregory
+  R.
+  Warnes,
+  Andreas
+  Weingessel,
+  Morten
+  Welinder,
+  James
+  Wettenhall,
+  Simon
+  Wood,
+  and
+  Achim
+  Zeileis.
+  Others
+  have
+  written
+  code
+  that
+  has
+  been
+  adopted
+  by
+  R
+  and
+  is
+  acknowledged
+  in
+  the
+  code
+  files,
+  including 
+Show in New WindowClear OutputExpand/Collapse Output
+[1] "String with trailing and leading white space"
+[1] "String with trailing and leading white space"
+Show in New WindowClear OutputExpand/Collapse Output
+[1] "a" "b" "c" "d"
+[1] "ab" "bc" "cd" "de"
+Show in New WindowClear OutputExpand/Collapse Output
+[1] ""
+[1] "a"
+[1] "a and b"
+[1] "a, b, and c"
+[1] "a, b, c, and d"
+Show in New WindowClear OutputExpand/Collapse Output
+`Twas brillig, and the slithy toves did
+gyre and gimble in the wabe: All mimsy
+were the borogoves, and the mome raths
+outgrabe.
+Show in New WindowClear OutputExpand/Collapse Output
+
+
+14.3.1.1 Exercise 3.What patterns will the regular expression \..\..\.. match? How would you represent it as a string?
+```{r}
+library(htmlwidgets)
+str_view(c("a.b.c", ".a.b.c", ".a.b.c.", ".a.b", ".....", "d.e.f.g"),
+         "\\..\\..\\..", match = TRUE)
+```
+The regular expression \..\..\.. will match all patterns that are composed by a dot followed by any character, repeated three times.
+
+14.3.3.1 Exercise 1.Create regular expressions to find all words that:
+```{r}
+#1. Start with a vowel.
+str_subset(stringr::words, "^[aeiou]")
+```
+
+```{r}
+#2. That only contain consonants. (Hint: thinking about matching “not”-vowels.)
+str_subset(stringr::words, "^[^aeiou]+$")
+```
+
+```{r}
+#3. End with ed, but not with eed.
+str_subset(c(stringr::words), "[^e]ed$")
+```
+
+```{r}
+#4. End with ing or ise.
+str_subset(stringr::words, "i(ng|se)$")
+```
+
+14.3.4.1 Exercise 2. Describe in words what these regular expressions match: (read carefully to see if I’m using a regular expression or a string that defines a regular expression.)
+```{r}
+#1. ^.*$
+
+#Example
+str_view(c("a.b.c", "", "abc", ".a.b.c.", ".a.b", "......", "fg1"),
+         "^.*$", match = TRUE)
+```
+The dot "." will refer to any character, therefore, it will match any string.
+
+```{r}
+#2. "\\{.+\\}"
+
+#Example
+
+str_view(c("a.b.c", "", "{abc}", ".a.b.c.", ".a.b", "{......}", "fg1"),
+         "\\{.+\\}", match = TRUE)
+
+```
+It will match with any string between curly brackets.
+
+```{r}
+#3. \d{4}-\d{2}-\d{2}
+
+#Example 
+str_view(c("a.b.c", "", "0000-00-00", "dodp-da-de", ".a.b.c.", "2019-03-29", "{......}", "fg1"),
+         "\\d{4}-\\d{2}-\\d{2}", match = TRUE)
+```
+It will match any string with numbers in the order dddd-dd-dd, such as dates.
+
+```{r}
+#4. "\\\\{4}"
+
+#Example 
+str_view(c("\\\\\\\\", "2\\\\5", "0000-00-00", "\\\\", ".a.b.c."),
+         "\\\\{4}", match = TRUE)
+
+```
+It will match strings with sets of 4 back slashes alone only.
+
+
+
+```{r}
+x <- c("a", "a b", "a b c", "a b c d", "a b c d e")
+str_extract_all(x, "[a-z]", simplify = TRUE)
+```
+
+14.4.3.1 Exercise 2.Find all contractions. Separate out the pieces before and after the apostrophe.
+```{r}
+#Find contractions
+contractions <- "([a-zA-Z]+)'([a-zA-Z]+)"
+
+#Separate them out
+all_contr <- sentences[str_detect(sentences, contractions)]
+str_match(all_contr, contractions)
+```
+
+14.4.4.1 Exercise 1. Replace all forward slashes in a string with backslashes.
+```{r}
+str_replace_all(c("/", " / ", "//"),"/", "\\\\")
+```
+
+14.4.5.1 Exercise 1.  Split up a string like "apples, pears, and bananas" into individual components.
+```{r}
+fruits <- c("apples, pears, and bananas")
+str_split(fruits, ", +(and +)?")[[1]]
+```
+
+Exercise 2. Why is it better to split up by boundary("word") than " "?
+```{r}
+str_split(fruits, " ")
+str_split(fruits, boundary("word"))[[1]]
+```
+Because the function boundary() is used to determine word boundaries, recognizing boundaries between words using space or punctuation, without separating them out together with the words, as " " does.
+
+
+14.5.1 Exercise 2. What are the five most common words in sentences?
+```{r}
+#Find most common words
+tibble(word = unlist(str_extract_all(sentences, boundary("word")))) %>%
+  mutate(word = str_to_lower(word)) %>% #to count lower and upper case
+  count(word, sort = TRUE) %>% #sort to put it in a rank, if FALSE it will be in alphabetic order
+  head(5)
+```
+The 5 most common words are in the table above.
+
+Data Wrangling - Going Deeper
+CA Air Quality Data 
+```{r}
+library(tidyverse, quietly = TRUE)
+library(readr, quietly = TRUE)
+o3.filepaths <- list.files("C:/Users/gusta/Desktop/PhD/Classes/ES207/ca_ozone", "\\.txt$", full.names = TRUE)
+o3.filenames <- list.files("C:/Users/gusta/Desktop/PhD/Classes/ES207/ca_ozone", pattern = ".txt") 
+o3.filenames
+
+```
+
+```{r}
+o3.filelist <- lapply(o3.filepaths, read_delim, delim = "|")
+o3.filelist
+```
+
+```{r}
+names(o3.filelist) <- gsub(".txt","", o3.filenames)
+o3.filelist 
+```
+
+3. What class is o3.filelist? What does it contain?
+The o3.filelist is a list object of same length of the original set, containing the data on the site, date, start hour and the observed ozone levels for all years.
+
+4. Using ~ 1 sentence per line in the above code, explain what each line in the code is doing.
+
+o3.filepaths <- list.files("C:/Users/gusta/Desktop/PhD/Classes/ES207/ca_ozone", "\\.txt$", full.names = TRUE) #Here we are producing a character vector of the path to the ".txt" files in the "ca_ozone" folder in my directory.
+
+o3.filenames <- list.files("C:/Users/gusta/Desktop/PhD/Classes/ES207/ca_ozone", pattern = ".txt") #Here we are producing a character vector of the names of ".txt" files in the "ca_ozone" folder in my directory.
+
+o3.filenames #Here we are printing the character vector of the names of the text files.
+
+o3.filelist <- lapply(o3.filepaths, read_delim, delim = "|") #Here we are producing a list object of the text files, in which we say the data area delimited by "|". 
+
+names(o3.filelist) <- gsub(".txt","", o3.filenames) #Here we are replacing all matches of a string, replacing ".txt" by "" (removing ".txt").
+
+o3.filelist #Here we are printing the final product of the lapply function.
+
+
+5. Rewrite the code above using the stringr package instead of grep{base}.
+```{r}
+#We can remove
+o3.filelist2 <- str_remove_all(o3.filenames, ".txt")
+o3.filelist2
+
+#or we can replace
+o3string <- o3.filenames
+
+o3.filelist3 <- str_replace_all(o3string, c(".*e/" = "",".txt" = ""))
+o3.filelist3 
+```
+
+```{r}
+# first define my function
+o3summarize <- function(x){
+  out <- group_by(x, site = as.factor(site), date) %>%
+  summarize(o3 = mean(obs, na.rm = TRUE))
+}
+# now apply my function to the list of tibbles
+daily <- o3.filelist %>% 
+  map(o3summarize)
+daily
+```
+
+
+6. Summarize the o3 data above by site and by month and by year using a piping operator (That is, find the monthly mean o3 for each site for each year).
+```{r}
+
+#summarize by site and by month and year
+require(lubridate)
+permonth <- o3.filelist %>%
+  rbindlist() %>%
+  mutate(month = format(date, "%mm"), year = format(date, "%YYYY")) %>%
+  group_by(site = as.factor(site), month, date) %>%
+  summarize(o3 = mean(obs, na.rm = TRUE))
+permonth
+```
+
+
+7. Ozone pollution actually follows a very strong diurnal pattern. How would you summarize the data from above in a better way to capture that diurnal pattern? Show me with your code.
+
+```{r}
+
+#Find difference between diurnal pattern vs. nocturnal
+o3diurnal <- function(x){
+  x$yr<- str_extract(x$date,"\\d{4}")
+  x$mon <- str_sub(x$date, 6,-4)
+  x$time <- ifelse(x$start_hour >= 7 & x$start_hour<= 15, "day", "night")
+  #Grouping
+  out <- group_by(x, site = as.factor(site), Year = as.factor(yr),
+                  Month = as.factor(mon),Time = time) %>%
+  summarize(o3 = mean(obs, na.rm = TRUE))
+}
+diurnalonly <- o3.filelist %>% 
+  map(o3diurnal)
+diurnalonly
+```
+
+
+```{r}
+library(tidyverse)
+library(readxl)
+loc <- read_excel("C:/Users/gusta/Desktop/PhD/Classes/ES207/ca_ozone/location.xls")
+loc
+```
+
+8. How many site names in the CA air quality location dataset “Site Name” contain “San” or “Santa?”
+```{r}
+sum(str_count(loc$`Site Name`, "^San|Santa"))
+sum(str_count(loc$`Site Name`, "San|Santa"))
+```
+91 locations start with San or Santa, and 100 have San or Santa at any part of the location's name.
+
+9. Identify the number of sites that do not have a complete address (full street address and zip code).
+```{r}
+realloc <- loc %>%
+  filter(!str_detect(Address, 'Location Approximate|Address Not Known')) %>% #filtering places withouth address
+  filter(!is.na(`Zip Code`)) %>% #filtering blanks
+  filter(str_detect(`Zip Code`, "[0-9]{5}")) %>% #filtering wrong zip codes with less than 5 numbers
+  mutate(a_count = str_count(Address,"\\d+\\s\\w")) %>%
+  filter(!(is.na(a_count)|(a_count == 0)))
+nrow(loc)-nrow(realloc)
+```
+The number of incomplete addresses is 431.
+
+
+10. What makes a dataset tidy?
+Having each variable in its own column, each observation in its own row and each type of observational unit (values) in its own cell.
+
+
+11. What is the interrelationship between the three rules of tidy data? What are the practical consequences?
+The three rules are interrelated, there is no way to satisfy two of the three. That interrelationship leads to an even simpler set of practical instructions: to put each dataset in a tibble and each variable in a column.
+The two main advantages to have tidy data are:
+- Picking one consistent way of storing data, because if you have a consistent data structure, it’s easier to learn the tools that work with it because they have an underlying uniformity.
+- Placing variables in columns allows R’s vectorised nature to shine, enabling us to use mutate and summary functions, for example.
+
+```{r}
+library(data.table)
+
+```
+
+```{r}
+daily.tibble <- rbind_list(daily)
+daily.tibble
+```
+
+```{r}
+colnames(loc)[1] <- "site"
+daily.site <- daily.tibble %>%
+  left_join(loc, by = "site")
+daily.site
+```
+
